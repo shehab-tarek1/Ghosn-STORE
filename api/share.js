@@ -14,7 +14,7 @@ module.exports = async (req, res) => {
     }
 
     const userAgent = (req.headers['user-agent'] || '').toLowerCase();
-    
+
     // التفريق بين روبوت واتساب والمستخدم البشري داخل واتساب
     const isWhatsAppBot = userAgent.includes('whatsapp') && !userAgent.includes('mozilla');
     const isOtherBot = /bot|crawler|spider|facebookexternalhit|twitter|telegram|linkedin|discord|viber|skype/i.test(userAgent);
@@ -60,7 +60,7 @@ module.exports = async (req, res) => {
         }
 
         const fields = data[0].document.fields || {};
-        const title = fields.name?.stringValue || 'Ghosn STORE';
+        const title = fields.name?.stringValue || 'A&M Store';
         const price = fields.price?.integerValue || fields.price?.doubleValue || '';
         const desc = fields.description?.stringValue || 'تسوق أحدث الملابس بأفضل الأسعار.';
 
@@ -68,7 +68,7 @@ module.exports = async (req, res) => {
         const titleWithPrice = `${title}${formattedPrice ? ' | ' + formattedPrice : ''}`;
         const finalDesc = `🔖 كود المنتج: ${p}\n${desc}`;
 
-        let imageUrl = '    <meta property="og:image" content="https://res.cloudinary.com/dsxrjmcxs/image/upload/c_limit,w_400,q_auto,f_auto/v1777061113/t2f9uqoiwgt2iukgsuih.jpg">'; 
+        let imageUrl = 'https://res.cloudinary.com/dsxrjmcxs/image/upload/c_limit,w_400,q_auto,f_auto/v1777061113/t2f9uqoiwgt2iukgsuih.jpg'; 
 
         if (fields.images?.arrayValue?.values?.length > 0) {
             imageUrl = fields.images.arrayValue.values[0].stringValue;
@@ -97,7 +97,7 @@ module.exports = async (req, res) => {
                 <meta property="og:image:type" content="image/jpeg" />
                 <meta property="og:image:width" content="600" />
                 <meta property="og:image:height" content="600" />
-                <meta property="og:site_name" content="A&M Store" />
+                <meta property="og:site_name" content="Ghosn STORE" />
                 <meta property="og:url" content="https://${req.headers.host}/p/${p}" />
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:title" content="${titleWithPrice}" />
