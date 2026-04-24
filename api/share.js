@@ -68,7 +68,8 @@ module.exports = async (req, res) => {
         const titleWithPrice = `${title}${formattedPrice ? ' | ' + formattedPrice : ''}`;
         const finalDesc = `🔖 كود المنتج: ${p}\n${desc}`;
 
-        let imageUrl = 'https://res.cloudinary.com/dsxrjmcxs/image/upload/c_fill,g_auto,w_512,h_512/v1776992294/lsxv7x8xmgbrq0ht4yy7.jpg'; 
+        let imageUrl = 'https://res.cloudinary.com/dsxrjmcxs/image/upload/w_600,h_600,c_fill,q_80,f_jpg/v1777061113/t2f9uqoiwgt2iukgsuih.jpg
+'; 
 
         if (fields.images?.arrayValue?.values?.length > 0) {
             imageUrl = fields.images.arrayValue.values[0].stringValue;
@@ -97,7 +98,7 @@ module.exports = async (req, res) => {
                 <meta property="og:image:type" content="image/jpeg" />
                 <meta property="og:image:width" content="600" />
                 <meta property="og:image:height" content="600" />
-                <meta property="og:site_name" content="A&M Store" />
+                <meta property="og:site_name" content="Ghosn STORE" />
                 <meta property="og:url" content="https://${req.headers.host}/p/${p}" />
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:title" content="${titleWithPrice}" />
