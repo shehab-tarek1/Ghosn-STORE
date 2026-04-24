@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/p/:code",
+      "destination": "/api/share?p=:code"
+    }
+  ]
+}
