@@ -30,7 +30,8 @@ module.exports = async (req, res) => {
     }
 
     // 🟢 إذا كان روبوت، نجلب بيانات المنتج من Firebase
-    const projectId = 'marketing-e9fdf';
+    // ⚠️ تنبيه: تأكد أن هذا هو اسم مشروع فايربيز الخاص بالمتجر الجديد وليس القديم
+    const projectId = 'marketing-e9fdf'; 
     const firestoreUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents:runQuery`;
 
     try {
@@ -60,7 +61,8 @@ module.exports = async (req, res) => {
         }
 
         const fields = data[0].document.fields || {};
-        const title = fields.name?.stringValue || 'A&M Store';
+        // تم تغيير الاسم هنا إلى Ghosn STORE
+        const title = fields.name?.stringValue || 'Ghosn STORE';
         const price = fields.price?.integerValue || fields.price?.doubleValue || '';
         const desc = fields.description?.stringValue || 'تسوق أحدث الملابس بأفضل الأسعار.';
 
@@ -68,8 +70,8 @@ module.exports = async (req, res) => {
         const titleWithPrice = `${title}${formattedPrice ? ' | ' + formattedPrice : ''}`;
         const finalDesc = `🔖 كود المنتج: ${p}\n${desc}`;
 
-        let imageUrl = 'https://res.cloudinary.com/dsxrjmcxs/image/upload/w_600,h_600,c_fill,q_80,f_jpg/v1777061113/t2f9uqoiwgt2iukgsuih.jpg
-'; 
+        // تم إصلاح مشكلة السطر الجديد هنا
+        let imageUrl = 'https://res.cloudinary.com/dsxrjmcxs/image/upload/w_600,h_600,c_fill,q_80,f_jpg/v1777061113/t2f9uqoiwgt2iukgsuih.jpg'; 
 
         if (fields.images?.arrayValue?.values?.length > 0) {
             imageUrl = fields.images.arrayValue.values[0].stringValue;
