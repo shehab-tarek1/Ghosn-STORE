@@ -68,7 +68,7 @@ module.exports = async (req, res) => {
         const titleWithPrice = `${title}${formattedPrice ? ' | ' + formattedPrice : ''}`;
         const finalDesc = `🔖 كود المنتج: ${p}\n${desc}`;
 
-        let imageUrl = 'https://res.cloudinary.com/dsxrjmcxs/image/upload/c_fill,g_auto,w_512,h_512/v1776992294/lsxv7x8xmgbrq0ht4yy7.jpg'; 
+        let imageUrl = '    <meta property="og:image" content="https://res.cloudinary.com/dsxrjmcxs/image/upload/c_limit,w_400,q_auto,f_auto/v1777061113/t2f9uqoiwgt2iukgsuih.jpg">'; 
 
         if (fields.images?.arrayValue?.values?.length > 0) {
             imageUrl = fields.images.arrayValue.values[0].stringValue;
