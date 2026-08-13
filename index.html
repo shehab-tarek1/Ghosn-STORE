@@ -134,7 +134,7 @@
         .custom-select-wrapper label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--text-dark); font-size: 0.9rem; }
         .custom-select-btn { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 12px 15px; background: var(--bg-main); border: 1px solid var(--border-light); border-radius: 12px; font-size: 0.85rem; color: var(--text-dark); cursor: pointer; transition: 0.3s; }
         .custom-select-btn:hover { border-color: var(--accent); }
-        .custom-select-list { position: absolute; bottom: 100%; top: auto; left: 0; right: 0; background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 12px; margin-bottom: 5px; margin-top: 0; box-shadow: 0 -8px 25px rgba(0,0,0,0.15); z-index: 999; max-height: 150px; overflow-y: auto; display: none; flex-direction: column; padding: 5px; }
+        .custom-select-list { position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 12px; margin-top: 5px; box-shadow: 0 10px 25px rgba(0,0,0,0.18); z-index: 999; max-height: 180px; overflow-y: auto; display: none; flex-direction: column; padding: 5px; }
         .custom-select-list.show { display: flex; animation: fadeInDown 0.2s ease-out; }
         @keyframes fadeInDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         .custom-select-item { padding: 10px 15px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-size: 0.85rem; color: var(--text-dark); }
@@ -356,6 +356,14 @@
             window.navigateUI(pageId);
         }
 
+        window.navigate = function(pageId, pushToHistory = true) {
+            if(pushToHistory && window.historyStack[window.historyStack.length - 1] !== pageId) {
+                window.historyStack.push(pageId);
+                window.history.pushState({ page: pageId }, "");
+            }
+            window.navigateUI(pageId);
+        }
+
         window.navigateUI = function(pageId) {
             const pages = ['home', 'category', 'details', 'cart'];
             pages.forEach(p => document.getElementById(p).classList.add('hidden'));
@@ -364,7 +372,7 @@
             window.scrollTo({ top: 0, behavior: 'instant' });
 
             const footer = document.getElementById('main-footer');
-            if(pageId === 'home') {
+            if(pageId === 'home' || pageId === 'cart') {
                 footer.style.display = 'block';
                 footer.classList.remove('hidden');
             } else {
