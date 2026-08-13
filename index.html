@@ -71,7 +71,7 @@
         .card-colors-label { font-size: 0.65rem; color: var(--text-muted); flex-shrink: 0; font-weight: bold; }
         .card-colors-dots { display: flex; gap: 3px; align-items: center; overflow: hidden; }
         .card-color-dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.15); flex-shrink: 0; display: inline-block; }
-        
+
         .card-desc-line { padding: 0 8px 6px; font-size: 0.7rem; color: var(--text-muted); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right; }
 
         .badge-discount { position: absolute; top: 8px; left: 8px; background-color: #e74c3c; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: bold; z-index: 5;}
@@ -107,10 +107,10 @@
         .close-lightbox { color: white; font-size: 2rem; margin-bottom: 20px; cursor: pointer; }
 
         .info-bar { display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface); padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; box-shadow: var(--shadow); border: 1px solid var(--border-light); font-size: 0.95rem;}
-        
+
         /* قسم تجهيز الطلب والسماح بظهور القوائم فوق الكروت */
         .options-section { background: var(--bg-surface); padding: 15px; border-radius: 12px; margin-bottom: 12px; box-shadow: var(--shadow); border: 1px solid var(--border-light); overflow: visible !important; position: relative; z-index: 10;}
-        
+
         .btn { width: 100%; padding: 12px; border: none; border-radius: 15px; font-size: 1rem; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; color: white; transition: 0.3s; margin-top: 15px;}
         .btn-primary { background: var(--theme-dark); }
         .btn-cart { background: var(--bg-surface); color: var(--theme-dark); border: 2px solid var(--theme-dark); }
@@ -408,8 +408,7 @@
 
             const baseUrl = window.location.href.split('?')[0].split('#')[0];
             const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-            const shareUrl = `${cleanBaseUrl}/?p=${p.shortCode}`;
-            const shareText = `شاهد هذا المنتج من Esca Store:\n`;
+            const shareUrl = `${cleanBaseUrl}/p/${p.shortCode}`;            const shareText = `شاهد هذا المنتج من Esca Store:\n`;
 
             if (navigator.share) {
                 navigator.share({ 
@@ -703,8 +702,7 @@
 
             const baseUrl = window.location.href.split('?')[0].split('#')[0];
             const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-            const productUrl = `${cleanBaseUrl}/?p=${p.shortCode}`;
-            const totalPrice = p.price * qty;
+            const productUrl = `${cleanBaseUrl}/p/${p.shortCode}`;            const totalPrice = p.price * qty;
 
             let msg = `مرحباً Esca Store، أود طلب:\n\n🔖 كود المنتج: ${p.shortCode}\n المنتج: ${p.name}\n القسم: ${p.category}\n اللون: ${color}\n المقاس: ${size}\n العدد: ${qty}\n إجمالي الحساب: ${totalPrice} ج.م\n\n🔗 الرابط: ${productUrl}`;
             window.open(`https://wa.me/${window.SELLER_PHONE}?text=${encodeURIComponent(msg)}`, '_blank');
@@ -754,7 +752,7 @@
 
             let msg = `مرحباً Esca Store، هذا طلبي من السلة:\n\n` + window.cart.map((item, i) => {
                 const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-                const productUrl = `${cleanBaseUrl}/?p=${item.shortCode}`;
+                const productUrl = `${cleanBaseUrl}/p/${item.shortCode}`;
                 let itemTotal = item.price * item.selQty;
                 totalCartPrice += itemTotal;
                 return `${i+1}- ${item.name} (قسم: ${item.category})\n🔖 كود: ${item.shortCode}\n لون: ${item.selColor} / مقاس: ${item.selSize} / عدد: ${item.selQty}\n السعر: ${itemTotal} ج.م\n🔗 الرابط: ${productUrl}`;
