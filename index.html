@@ -272,31 +272,73 @@
         }
 
         async function fetchProducts() {
-            try {
-                const querySnapshot = await getDocs(collection(db, "products"));
-                window.products = querySnapshot.docs.map(doc => ({ id: doc.id, firebaseId: doc.id, ...doc.data() }));
+    try {
+        const querySnapshot = await getDocs(collection(db, "products"));
 
-                document.getElementById('global-loader').style.display = 'none';
+        window.products = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            firebaseId: doc.id,
+            ...doc.data()
+        }));
 
-                const urlParams = new URLSearchParams(window.location.search);
-                const sharedCode = urlParams.get('p');
-                window.history.replaceState({ page: 'home' }, "");
+        // إخفاء شاشة التحميل دائمًا بعد انتهاء جلب البيانات
+        document.getElementById('global-loader').style.display = 'none';
 
-                if (sharedCode) {
-                    const targetProduct = window.products.find(x => String(x.shortCode) === String(sharedCode));
-                    if (targetProduct) {
-                        window.historyStack = ['home', 'details'];
-                        window.history.pushState({ page: 'details' }, "");
-                        window.openProduct(targetProduct.id, false);
-                        return;
-                    }
-                }
-                window.resetAndNavigate('home');
-            } catch (error) {
-                console.error("خطأ في جلب البيانات:", error);
-                alert("حدث خطأ أثناء الاتصال بالخادم.");
+        // لو مفيش منتجات
+        if (querySnapshot.empty) {
+            console.log("لا توجد منتجات حاليًا");
+
+            // الانتقال للصفحة الرئيسية بشكل طبيعي
+            window.resetAndNavigate('home');
+
+            // إظهار رسالة عدم وجود منتجات
+            const emptyProducts = document.getElementById('empty-products');
+
+            if (emptyProducts) {
+                emptyProducts.style.display = 'block';
+                emptyProducts.textContent = 'لا توجد منتجات حاليًا';
+            }
+
+            return;
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const sharedCode = urlParams.get('p');
+
+        window.history.replaceState({ page: 'home' }, "");
+
+        if (sharedCode) {
+            const targetProduct = window.products.find(
+                x => String(x.shortCode) === String(sharedCode)
+            );
+
+            if (targetProduct) {
+                window.historyStack = ['home', 'details'];
+                window.history.pushState({ page: 'details' }, "");
+                window.openProduct(targetProduct.id, false);
+                return;
             }
         }
+
+        window.resetAndNavigate('home');
+
+    } catch (error) {
+        console.error("خطأ في جلب البيانات:", error);
+
+        // مهم: لا تترك الموقع في حالة Loading
+        document.getElementById('global-loader').style.display = 'none';
+
+        // افتح الصفحة الرئيسية حتى لو حصل خطأ
+        window.resetAndNavigate('home');
+
+        const emptyProducts = document.getElementById('empty-products');
+
+        if (emptyProducts) {
+            emptyProducts.style.display = 'block';
+            emptyProducts.textContent = 'لا توجد منتجات حاليًا';
+        }
+    }
+}
 
         window.showToast = function(message, color = "#27ae60") {
             const toast = document.getElementById('toast');
