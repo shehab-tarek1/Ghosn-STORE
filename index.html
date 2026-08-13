@@ -302,7 +302,7 @@
     if (url.includes('#crop=')) {
         const parts = url.split('#crop=');
         cleanUrl = parts[0];
-        // تم إضافة g_north_west لبدء القص من أعلى اليسار بدقة بدلاً من المنتصف
+        // c_crop,g_north_west مع النسب المئوية
         cropTransform = 'c_crop,g_north_west,' + parts[1] + '/';
     }
 
