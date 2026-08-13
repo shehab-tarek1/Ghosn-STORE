@@ -210,17 +210,16 @@
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // ملاحظة: ضع رقم الـ UID الخاص بك هنا بدلاً من الرقم القديم (انسخه من رسالة الخطأ التي ستظهر لك)
-                const ADMIN_UID = "XIarwijEVRSX7S8HY3qZIedH5qW2"; 
+                // تم وضع الـ UID الجديد الخاص بك بنجاح
+                const ADMIN_UID = "LHmEKd4Harh5QuE4KvKps6PZ16v2"; 
 
-                if(user.uid === ADMIN_UID || ADMIN_UID === "XIarwijEVRSX7S8HY3qZIedH5qW2") { 
-                    // سيتم السماح لك بالدخول، ولكن يفضل تحديث الـ UID لزيادة الأمان
+                if(user.uid === ADMIN_UID) { 
                     document.getElementById('login-screen').style.display = 'none';
                     document.getElementById('admin-content').style.display = 'block';
                     fetchProducts();
                 } else {
                     const errorBox = document.getElementById('login-error');
-                    errorBox.innerHTML = `ليس لديك صلاحية الإدارة!<br>رقم حسابك (UID) هو:<br><strong style="color:#a31738; font-size:1.1rem; user-select:all;">${user.uid}</strong><br><br>يرجى نسخ هذا الرقم ووضعه في كود الأدمن مكان الرقم القديم للسماح لك بالدخول.`;
+                    errorBox.innerHTML = `ليس لديك صلاحية الإدارة! هذا الحساب غير مصرح له بالدخول.`;
                     errorBox.style.display = 'block';
                     auth.signOut();
                 }
