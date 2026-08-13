@@ -1,8 +1,8 @@
 {
   "rewrites": [
     {
-      "source": "/p/:p",
-      "destination": "/api/p?p=:p" 
+      "source": "/p/:code",
+      "destination": "/api/share?code=:code"
     }
   ]
 }
