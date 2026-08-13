@@ -340,17 +340,23 @@
 
         // تطبيق حفظ تحديد الجزء وإرفاقه بالرابط
         window.applyCrop = function() {
-            if(!window.cropper || window.activeImageIndex === null) return;
-            
-            const cropData = window.cropper.getData(true); // جلب الإحداثيات الأرقام الصحيحة
-            const cropString = `x_${cropData.x},y_${cropData.y},w_${cropData.width},h_${cropData.height}`;
-            
-            let rawUrl = window.currentImagesList[window.activeImageIndex].split('#crop=')[0];
-            window.currentImagesList[window.activeImageIndex] = `${rawUrl}#crop=${cropString}`;
+    if(!window.cropper || window.activeImageIndex === null) return;
+    
+    const cropData = window.cropper.getData(true);
+    // حماية الإحداثيات من الأرقام السلبية
+    const x = Math.max(0, Math.round(cropData.x));
+    const y = Math.max(0, Math.round(cropData.y));
+    const w = Math.round(cropData.width);
+    const h = Math.round(cropData.height);
 
-            window.closeCropModal();
-            window.renderImagePreviews();
-        }
+    const cropString = `x_${x},y_${y},w_${w},h_${h}`;
+    
+    let rawUrl = window.currentImagesList[window.activeImageIndex].split('#crop=')[0];
+    window.currentImagesList[window.activeImageIndex] = `${rawUrl}#crop=${cropString}`;
+
+    window.closeCropModal();
+    window.renderImagePreviews();
+}
 
         window.closeCropModal = function() {
             document.getElementById('crop-modal').style.display = 'none';
