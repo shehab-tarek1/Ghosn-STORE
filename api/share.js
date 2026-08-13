@@ -62,7 +62,11 @@ module.exports = async (req, res) => {
 
         // 2. وصف المنتج
         let productDesc = fields.description?.stringValue || 'تسوق أحدث الحقائب والأحذية بأفضل الأسعار من متجر Esca Store.';
-        let desc = `الوصف: ${productDesc}\n\nللطلب تواصل معنا عبر الواتساب: 01206244875`;
+        // تنظيف الوصف من أي أسطر جديدة واستبدالها بمساحات
+let cleanDesc = productDesc.replace(/[\r\n]+/g, ' ').trim();
+
+// دمج الوصف في سطر واحد متصل باستخدام فواصل أنيقة يفهمها فيسبوك
+let desc = `${cleanDesc} • للطلب تواصل واتساب: 01206244875`;
 
         // 3. صورة المنتج
         let imageUrl = fields.images?.arrayValue?.values?.[0]?.stringValue || fields.img?.stringValue || 'https://res.cloudinary.com/dsxrjmcxs/image/upload/v1786578381/sot79yhkjy82ptwel6em.jpg';
