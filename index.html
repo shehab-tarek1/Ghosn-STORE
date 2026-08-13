@@ -294,13 +294,29 @@
                     .replace('كبير (Large)', 'L');
         }
 
-        window.optimizeImage = function(url, width) {
-            if (!url) return '';
-            if (url.includes('res.cloudinary.com') && url.includes('/upload/')) {
-                return url.replace('/upload/', `/upload/c_scale,w_${width}/`);
-            }
-            return url;
-        }
+        window.optimizeImage = function(url, width = 400) {
+    if (!url) return '';
+    let cleanUrl = url;
+    let cropTransform = '';
+
+    // قراءة إحداثيات القص المحفوظة
+    if (url.includes('#crop=')) {
+        const parts = url.split('#crop=');
+        cleanUrl = parts[0];
+        cropTransform = 'c_crop,' + parts[1] + '/';
+    }
+
+    if (cleanUrl.includes('res.cloudinary.com') && cleanUrl.includes('/upload/')) {
+        return cleanUrl.replace('/upload/', `/upload/${cropTransform}c_scale,w_${width},q_auto,f_auto/`);
+    }
+    return cleanUrl;
+}
+
+// دالة لجلب الصورة الكاملة الأصلية عند فتح التكبير (Lightbox)
+window.getFullImage = function(url) {
+    if (!url) return '';
+    return url.split('#crop=')[0];
+}
 
         async function fetchProducts() {
             try {
@@ -559,7 +575,7 @@
             }
 
             let imgsArray = p.images && p.images.length > 0 ? p.images.slice(0, 7) : [p.img];
-            let sliderHtml = imgsArray.map(imgSrc => `<img src="${window.optimizeImage(imgSrc, 500)}" onclick="openLightbox('${window.optimizeImage(imgSrc, 800)}')">`).join('');
+            let sliderHtml = imgsArray.map(imgSrc => `<img src="${window.optimizeImage(imgSrc, 500)}" onclick="openLightbox('${window.getFullImage(imgSrc)}')">`).join('');
             let dotsHtml = imgsArray.map((_, i) => `<span class="dot ${i===0 ? 'active' : ''}"></span>`).join('');
 
             let safeSizes = p.sizes || [];
