@@ -7,28 +7,23 @@
     <meta name="description" content="تسوق أحدث الحقائب والاحذية بافضل الاسعار ">
     <meta property="og:title" content="Esca Store | متجر">
     <meta property="og:description" content="تشكيلة رائعة من أحدث الموديلات، اطلب الآن بأفضل الأسعار.">
-    <meta property="og:image" content="https://res.cloudinary.com/dsxrjmcxs/image/upload/c_limit,w_400,q_auto,f_auto/v1786578381/sot79yhkjy82ptwel6em.jpg
-">
+    <meta property="og:image" content="https://res.cloudinary.com/dsxrjmcxs/image/upload/c_limit,w_400,q_auto,f_auto/v1786578381/sot79yhkjy82ptwel6em.jpg">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { 
-            /* خلفيات دافئة قليلاً لتناسب البرجندي */
             --bg-main: #fdfafb; 
             --bg-surface: #ffffff; 
-            
-            /* ألوان البرجندي (العنابي الفخم) */
-            --theme-dark: #722F37; /* لون برجندي أساسي لباقي العناصر */
-            --header-bg: linear-gradient(135deg, #800020 0%, #4a0012 100%); /* هيدر وفوتر برجندي غامق ومميز */
-            
+            --theme-dark: #722F37; 
+            --header-bg: linear-gradient(135deg, #800020 0%, #4a0012 100%); 
             --text-light: #ffffff; 
             --text-dark: #2d3436; 
             --text-muted: #636e72; 
-            --border-light: #eadddf; /* حدود بلمسة دافئة */
-            --accent: #a31738; /* لون برجندي زاهي للتنبيهات والأسعار */
+            --border-light: #eadddf; 
+            --accent: #a31738; 
             --silver: #b2bec3; 
             --radius: 20px; 
-            --shadow: 0 8px 20px rgba(128, 0, 32, 0.08); /* ظل خفيف جداً واخد من روح البرجندي */
+            --shadow: 0 8px 20px rgba(128, 0, 32, 0.08); 
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: var(--bg-main); color: var(--text-dark); min-height: 100vh; display: flex; flex-direction: column; align-items: center;}
@@ -40,15 +35,14 @@
         .toast-notification { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background-color: #27ae60; color: white; padding: 12px 25px; border-radius: 30px; font-size: 0.95rem; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px; z-index: 9999; transition: top 0.4s ease-in-out; }
         .toast-notification.show { top: 20px; }
 
-        /* الهيدر البرجندي المميز */
         header { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 8px 15px; background: var(--header-bg); box-shadow: var(--shadow); position: sticky; top: 0; z-index: 100; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px;}
-        
+
         .header-right { display: flex; align-items: center; gap: 10px; cursor: pointer; }
         .logo-img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--text-light); object-fit: cover; }
         .site-name { font-size: 1.05rem; font-weight: bold; color: var(--text-light); } 
         .header-left { display: flex; gap: 15px; align-items: center; }
         .cart-icon { font-size: 1.3rem; color: var(--text-light); cursor: pointer; position: relative; transition: 0.3s; margin-left: 5px;}
-        .cart-icon:hover { color: #f4d03f; /* لون ذهبي عند المرور بالماوس يتماشى مع البرجندي */ }
+        .cart-icon:hover { color: #f4d03f; }
         .cart-count { position: absolute; top: -6px; right: -8px; background: #e74c3c; color: white; border-radius: 50%; font-size: 0.7rem; padding: 2px 6px; font-weight: bold;}
 
         main { padding: 20px 15px; width: 100%; max-width: 800px; flex: 1; animation: fadeInPage 0.25s ease-out; }
@@ -64,15 +58,15 @@
         .category-card img { width: 100%; height: 130px; object-fit: cover; object-position: top center; display: block;}
         .category-card h3 { background: var(--header-bg); color: var(--text-light); padding: 10px; font-size: 0.95rem; margin: 0; }
 
-
         .inner-product-card { position: relative; background: var(--bg-surface); border-radius: var(--radius); overflow: hidden; text-align: center; box-shadow: var(--shadow); cursor: pointer; border: 1px solid var(--border-light); flex-shrink: 0; scroll-snap-align: start; }
         .inner-product-card .img-container { position: relative; width: 100%; height: 130px; }
         .inner-product-card img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; border-bottom: 1px solid var(--border-light);}
 
-        .product-price-badge { font-size: 0.9rem; font-weight: bold; color: var(--accent); margin: 8px 0 2px 0; }
-
-        .inner-product-card h3 { padding: 4px 8px; font-size: 0.85rem; color: var(--text-dark); margin: 0; }
-        .inner-product-card p { padding: 0 8px 10px; font-size: 0.7rem; color: var(--text-muted); margin: 0; }
+        /* تنسيقات العنوان والسعر في نفس السطر */
+        .title-price-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 8px 0; gap: 4px; }
+        .inner-product-card h3 { padding: 0; font-size: 0.82rem; color: var(--text-dark); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right; }
+        .product-price-badge { font-size: 0.85rem; font-weight: bold; color: var(--accent); margin: 0; white-space: nowrap; }
+        .inner-product-card p { padding: 2px 8px 8px; font-size: 0.7rem; color: var(--text-muted); margin: 0; }
 
         .badge-discount { position: absolute; top: 8px; left: 8px; background-color: #e74c3c; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: bold; z-index: 5;}
         .badge-outofstock { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(114, 47, 55, 0.85); color: white; padding: 6px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; z-index: 5; white-space: nowrap; }
@@ -89,7 +83,6 @@
 
         .share-icon { position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.95); color: var(--theme-dark); width: 28px; height: 28px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 10; font-size: 0.8rem;}
 
-        /* الفوتر بنفس التدرج البرجندي الفخم */
         footer { background: var(--header-bg); color: var(--text-light); border-radius: 25px; padding: 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.15); margin: 10px auto 25px auto; width: calc(100% - 30px); max-width: 760px; border: 1px solid rgba(255,255,255,0.1); }
         footer .footer-logo { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--text-light); margin-bottom: 10px; }
         .social-links { display: flex; justify-content: center; gap: 20px; margin-top: 15px; }
@@ -111,12 +104,12 @@
         .options-section { background: var(--bg-surface); padding: 15px; border-radius: 12px; margin-bottom: 12px; box-shadow: var(--shadow); border: 1px solid var(--border-light);}
         .option-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top:8px;}
         .badge { padding: 6px 15px; border: 1px solid var(--border-light); border-radius: 20px; background: var(--bg-main); color: var(--text-muted); font-size: 0.85rem;}
-        
+
         .btn { width: 100%; padding: 12px; border: none; border-radius: 15px; font-size: 1rem; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; color: white; transition: 0.3s; margin-top: 15px;}
         .btn-primary { background: var(--theme-dark); }
         .btn-cart { background: var(--bg-surface); color: var(--theme-dark); border: 2px solid var(--theme-dark); }
         .btn-whatsapp { background: #25D366; }
-        
+
         .form-group { margin-bottom: 12px; }
         .form-group label { display: block; margin-bottom: 6px; font-weight: bold; color: var(--text-dark); font-size: 0.9rem;}
         .form-control { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--border-light); font-size: 0.95rem; background: var(--bg-main); outline: none;}
@@ -147,8 +140,7 @@
 
     <header>
         <div class="header-right" onclick="resetAndNavigate('home')">
-            <img src="https://res.cloudinary.com/dsxrjmcxs/image/upload/c_limit,w_400,q_auto,f_auto/v1786578381/sot79yhkjy82ptwel6em.jpg
-" class="logo-img" alt="Logo">
+            <img src="https://res.cloudinary.com/dsxrjmcxs/image/upload/c_limit,w_400,q_auto,f_auto/v1786578381/sot79yhkjy82ptwel6em.jpg" class="logo-img" alt="Logo">
             <div class="site-name">Esca Store</div>
         </div>
         <div class="header-left">
@@ -159,7 +151,7 @@
         </div>
     </header>
 
-        <div class="lightbox" id="lightbox">
+    <div class="lightbox" id="lightbox">
         <i class="fa-solid fa-xmark close-lightbox" onclick="closeLightbox()"></i>
         <img id="lightbox-img" src="">
     </div>
@@ -178,8 +170,6 @@
                 <img src="https://res.cloudinary.com/dsxrjmcxs/image/upload/c_limit,w_400,q_auto,f_auto/v1786599118/pleuss0umchv2ojmr0nv.jpg">
                 <h3>شنط سواريه</h3>
             </div>
-            
-            <!-- البطاقة الرابعة أصبحت هي العروض الخاصة بحجم عادي -->
             <div class="category-card" onclick="openCategory('عروض')">
                 <img src="https://res.cloudinary.com/dsxrjmcxs/image/upload/c_limit,w_400,q_auto,f_auto/v1786599107/fmstz1mvfnnpnvyeliro.jpg">
                 <h3>عروض خاصة</h3>
@@ -227,16 +217,15 @@
     </main>
 
     <footer id="main-footer" class="hidden">
-        <img src="https://res.cloudinary.com/dsxrjmcxs/image/upload/c_limit,w_600,q_auto,f_auto/v1786578381/sot79yhkjy82ptwel6em.jpg
-" class="footer-logo" alt="Logo">
+        <img src="https://res.cloudinary.com/dsxrjmcxs/image/upload/c_limit,w_600,q_auto,f_auto/v1786578381/sot79yhkjy82ptwel6em.jpg" class="footer-logo" alt="Logo">
         <h2 style="color: var(--text-light); font-size:1.1rem;">Esca Store</h2>
         <div style="margin-top: 5px; color: #cbd5e1; font-size: 0.85rem;">
             <p><i class="fa-solid fa-location-dot" style="color: var(--accent); margin-left: 5px;"></i> العنوان: القاهرة</p>
-            <p style="margin-top: 5px;"><i class="fa-solid fa-user-tie" style="color: var(--accent); margin-left: 5px;"></i> البائع:Esca</p>
+            <p style="margin-top: 5px;"><i class="fa-solid fa-user-tie" style="color: var(--accent); margin-left: 5px;"></i> البائع: Esca</p>
         </div>
         <div class="social-links">
             <a href="https://www.instagram.com/ghosn_store2025?igsh=eXM1cXUyNWx6cTRu" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-            <a  href="https://wa.me/201206244875" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+            <a href="https://wa.me/201206244875" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
         </div>
     </footer>
 
@@ -257,12 +246,11 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        window.products =[];
-        window.cart = JSON.parse(localStorage.getItem('am_cart')) ||[];
+        window.products = [];
+        window.cart = JSON.parse(localStorage.getItem('am_cart')) || [];
         window.SELLER_PHONE = "201206244875";
         window.historyStack = ['home'];
 
-        // دالة ذكية لتحجيم الصور لتسريع الموقع
         window.optimizeImage = function(url, width) {
             if (!url) return '';
             if (url.includes('res.cloudinary.com') && url.includes('/upload/')) {
@@ -288,7 +276,7 @@
                 if (sharedCode) {
                     const targetProduct = window.products.find(x => String(x.shortCode) === String(sharedCode));
                     if (targetProduct) {
-                        window.historyStack =['home', 'details'];
+                        window.historyStack = ['home', 'details'];
                         window.history.pushState({ page: 'details' }, "");
                         window.openProduct(targetProduct.id, false);
                         return;
@@ -327,8 +315,7 @@
             const pages = ['home', 'category', 'details', 'cart'];
             pages.forEach(p => document.getElementById(p).classList.add('hidden'));
             document.getElementById(pageId).classList.remove('hidden');
-            
-            // إيقاف السكرول الناعم هنا لمنع التقطيع أثناء التنقل
+
             window.scrollTo({ top: 0, behavior: 'instant' });
 
             const footer = document.getElementById('main-footer');
@@ -368,7 +355,7 @@
 
             const domain = window.location.origin;
             const shareUrl = `${domain}/p/${p.shortCode}`;
-            const shareText = `شاهد هذا المنتج من Ghosn STORE:\n`;
+            const shareText = `شاهد هذا المنتج من Esca Store:\n`;
 
             if (navigator.share) {
                 navigator.share({ 
@@ -396,8 +383,11 @@
                     ${discountBadge}
                     <div class="share-icon" onclick="shareProduct(event, '${p.id}')" title="مشاركة المنتج"><i class="fa-solid fa-share-nodes"></i></div>
                     <div class="img-container"><img src="${displayImg}" class="${imgClass}" loading="lazy">${outOfStockBadge}</div>
-                    <div class="product-price-badge">${p.price} ج.م</div>
-                    <h3>${p.name}</h3><p>${p.category}</p>
+                    <div class="title-price-row">
+                        <h3>${p.name}</h3>
+                        <div class="product-price-badge">${p.price} ج.م</div>
+                    </div>
+                    <p style="text-align: right; margin-top: 2px;">${p.category}</p>
                 </div>
             `;
         }
@@ -405,7 +395,7 @@
         window.renderHomeSlider = function() {
             const slider = document.getElementById('latest-products-slider');
             let visibleProducts = window.products.filter(p => !p.hidden);
-            
+
             if(visibleProducts.length === 0) {
                 slider.innerHTML = '<p style="font-size:0.85rem; color:var(--text-muted)">لا توجد منتجات حالياً.</p>';
                 return;
@@ -417,9 +407,7 @@
                 return dateB - dateA;
             });
 
-            // الحقن دفعة واحدة لمنع اللاج
             slider.innerHTML = visibleProducts.slice(0, 10).map(p => window.generateProductCardHTML(p)).join('');
-
             setTimeout(() => { slider.scrollLeft = 0; }, 10);
         }
 
@@ -433,7 +421,7 @@
         window.openCategory = function(catName) {
             document.getElementById('category-title').innerText = catName === 'عروض' ? 'عروض خاصة' : "قسم " + catName;
             const container = document.getElementById('category-products');
-            
+
             container.innerHTML = '';
 
             let filtered = catName === 'عروض' ? window.products.filter(p => p.isOffer === true && !p.hidden) : window.products.filter(p => p.category === catName && !p.hidden);
@@ -441,7 +429,6 @@
             if(filtered.length === 0) {
                 container.innerHTML = '<p style="grid-column: span 2; text-align:center; font-size:0.9rem; color:var(--text-muted)">لا توجد منتجات في هذا القسم حالياً.</p>';
             } else {
-                // الحقن دفعة واحدة لمنع اللاج
                 container.innerHTML = filtered.map(p => window.generateProductCardHTML(p)).join('');
             }
             window.navigate('category');
@@ -500,8 +487,8 @@
             let sliderHtml = imgsArray.map(imgSrc => `<img src="${window.optimizeImage(imgSrc, 500)}" onclick="openLightbox('${window.optimizeImage(imgSrc, 800)}')">`).join('');
             let dotsHtml = imgsArray.map((_, i) => `<span class="dot ${i===0 ? 'active' : ''}"></span>`).join('');
 
-            let safeSizes = p.sizes ||[];
-            let safeColors = p.colors ||[];
+            let safeSizes = p.sizes || [];
+            let safeColors = p.colors || [];
 
             let sizeItems = safeSizes.map(s => `<div class="custom-select-item" onclick="selectCustomOption('size', '${s}')">${s}</div>`).join('');
             let colorItems = safeColors.map(c => `<div class="custom-select-item" onclick="selectCustomOption('color', '${c}')">${c}</div>`).join('');
@@ -613,7 +600,7 @@
             const productUrl = `${cleanBaseUrl}/p/${p.shortCode}`;
             const totalPrice = p.price * qty;
 
-            let msg = `مرحباً Ghosn STORE، أود طلب:\n\n🔖 كود المنتج: ${p.shortCode}\n المنتج: ${p.name}\n القسم: ${p.category}\n اللون: ${color}\n المقاس: ${size}\n العدد: ${qty}\n إجمالي الحساب: ${totalPrice} ج.م\n\n🔗 الرابط: ${productUrl}`;
+            let msg = `مرحباً Esca Store، أود طلب:\n\n🔖 كود المنتج: ${p.shortCode}\n المنتج: ${p.name}\n القسم: ${p.category}\n اللون: ${color}\n المقاس: ${size}\n العدد: ${qty}\n إجمالي الحساب: ${totalPrice} ج.م\n\n🔗 الرابط: ${productUrl}`;
             window.open(`https://wa.me/${window.SELLER_PHONE}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
@@ -659,7 +646,7 @@
             const baseUrl = window.location.href.split('?')[0].split('#')[0];
             let totalCartPrice = 0;
 
-            let msg = `مرحباً Ghosn STORE، هذا طلبي من السلة:\n\n` + window.cart.map((item, i) => {
+            let msg = `مرحباً Esca Store، هذا طلبي من السلة:\n\n` + window.cart.map((item, i) => {
                 const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
                 const productUrl = `${cleanBaseUrl}/p/${item.shortCode}`;
                 let itemTotal = item.price * item.selQty;
