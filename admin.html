@@ -205,21 +205,22 @@
 
         // دالة معالجة روابط القص لكروت المنتجات
         window.optimizeImage = function(url, width = 400) {
-            if (!url) return '';
-            let cleanUrl = url;
-            let cropTransform = '';
+    if (!url) return '';
+    let cleanUrl = url;
+    let cropTransform = '';
 
-            if (url.includes('#crop=')) {
-                const parts = url.split('#crop=');
-                cleanUrl = parts[0];
-                cropTransform = 'c_crop,' + parts[1] + '/';
-            }
+    if (url.includes('#crop=')) {
+        const parts = url.split('#crop=');
+        cleanUrl = parts[0];
+        // c_crop,g_north_west مع النسب المئوية
+        cropTransform = 'c_crop,g_north_west,' + parts[1] + '/';
+    }
 
-            if (cleanUrl.includes('res.cloudinary.com') && cleanUrl.includes('/upload/')) {
-                return cleanUrl.replace('/upload/', `/upload/${cropTransform}c_scale,w_${width},q_auto,f_auto/`);
-            }
-            return cleanUrl;
-        }
+    if (cleanUrl.includes('res.cloudinary.com') && cleanUrl.includes('/upload/')) {
+        return cleanUrl.replace('/upload/', `/upload/${cropTransform}c_scale,w_${width},q_auto,f_auto/`);
+    }
+    return cleanUrl;
+}
 
         const availableColors = ["أسود", "أبيض", "أحمر", "نبيتي", "كحلي", "رصاصي", "أزرق", "أخضر", "زيتي", "أصفر", "جملي", "بيج", "بني", "هافان", "كشمير", "فوشيا", "موف", "ذهبي", "فضي", "متعدد الألوان"];
 
@@ -318,38 +319,47 @@
         }
 
         // فتح نافذة تحديد التركيز والقص
-        window.openCropModal = function(index) {
-            window.activeImageIndex = index;
-            let rawUrl = window.currentImagesList[index].split('#crop=')[0]; // الصورة الأصلية بدون قص
-            
-            const targetImg = document.getElementById('crop-image-target');
-            targetImg.src = rawUrl;
+        // 1. دالة فتح نافذة القص مع الانتظار لحين اكتمال تحميل الصورة
+window.openCropModal = function(index) {
+    window.activeImageIndex = index;
+    let rawUrl = window.currentImagesList[index].split('#crop=')[0];
+    
+    const targetImg = document.getElementById('crop-image-target');
+    
+    // إزالة المكتبة القديمة إن وجدت
+    if(window.cropper) { window.cropper.destroy(); window.cropper = null; }
 
-            document.getElementById('crop-modal').style.display = 'flex';
+    document.getElementById('crop-modal').style.display = 'flex';
 
-            if(window.cropper) window.cropper.destroy();
+    // عدم تشغيل القص إلا بعد أن يكتمل تحميل الصورة في الشاشة لضمان دقة الأبعاد
+    targetImg.onload = function() {
+        window.cropper = new Cropper(targetImg, {
+            aspectRatio: 1, // مربع متساوي
+            viewMode: 1,
+            autoCropArea: 0.9,
+            responsive: true,
+            background: false
+        });
+    };
+    
+    targetImg.src = rawUrl;
+}
 
-            window.cropper = new Cropper(targetImg, {
-    aspectRatio: 1, // نسبة 1:1 مربع بالضبط ليلائم كروت المنتجات
-    viewMode: 1,
-    autoCropArea: 0.9,
-    responsive: true,
-    background: false
-});
-        }
-
-        // تطبيق حفظ تحديد الجزء وإرفاقه بالرابط
-        window.applyCrop = function() {
+// 2. دالة حفظ القص باستخدام النسب المئوية المضمونة
+window.applyCrop = function() {
     if(!window.cropper || window.activeImageIndex === null) return;
     
-    const cropData = window.cropper.getData(true);
-    // حماية الإحداثيات من الأرقام السلبية
-    const x = Math.max(0, Math.round(cropData.x));
-    const y = Math.max(0, Math.round(cropData.y));
-    const w = Math.round(cropData.width);
-    const h = Math.round(cropData.height);
+    const data = window.cropper.getData();
+    const imageData = window.cropper.getImageData();
 
-    const cropString = `x_${x},y_${y},w_${w},h_${h}`;
+    // حساب النسب المئوية المضمونة (من 0.0 إلى 1.0) بدلاً من البكسل الثابت
+    const x = Math.max(0, (data.x / imageData.naturalWidth)).toFixed(4);
+    const y = Math.max(0, (data.y / imageData.naturalHeight)).toFixed(4);
+    const w = Math.min(1, (data.width / imageData.naturalWidth)).toFixed(4);
+    const h = Math.min(1, (data.height / imageData.naturalHeight)).toFixed(4);
+
+    // إرسال كود fl_relative للسيرفر
+    const cropString = `fl_relative,x_${x},y_${y},w_${w},h_${h}`;
     
     let rawUrl = window.currentImagesList[window.activeImageIndex].split('#crop=')[0];
     window.currentImagesList[window.activeImageIndex] = `${rawUrl}#crop=${cropString}`;
