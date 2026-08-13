@@ -61,8 +61,6 @@
         .inner-product-card { position: relative; background: var(--bg-surface); border-radius: var(--radius); overflow: hidden; text-align: center; box-shadow: var(--shadow); cursor: pointer; border: 1px solid var(--border-light); flex-shrink: 0; scroll-snap-align: start; }
         .inner-product-card .img-container { position: relative; width: 100%; height: 130px; }
         .inner-product-card img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; border-bottom: 1px solid var(--border-light);}
-
-        /* تنسيقات العنوان والسعر في نفس السطر */
         .title-price-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 8px 0; gap: 4px; }
         .inner-product-card h3 { padding: 0; font-size: 0.82rem; color: var(--text-dark); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right; }
         .product-price-badge { font-size: 0.85rem; font-weight: bold; color: var(--accent); margin: 0; white-space: nowrap; }
@@ -102,9 +100,7 @@
 
         .info-bar { display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface); padding: 12px 15px; border-radius: 12px; margin-bottom: 12px; box-shadow: var(--shadow); border: 1px solid var(--border-light); font-size: 0.95rem;}
         .options-section { background: var(--bg-surface); padding: 15px; border-radius: 12px; margin-bottom: 12px; box-shadow: var(--shadow); border: 1px solid var(--border-light);}
-        .option-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top:8px;}
-        .badge { padding: 6px 15px; border: 1px solid var(--border-light); border-radius: 20px; background: var(--bg-main); color: var(--text-muted); font-size: 0.85rem;}
-
+        
         .btn { width: 100%; padding: 12px; border: none; border-radius: 15px; font-size: 1rem; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; color: white; transition: 0.3s; margin-top: 15px;}
         .btn-primary { background: var(--theme-dark); }
         .btn-cart { background: var(--bg-surface); color: var(--theme-dark); border: 2px solid var(--theme-dark); }
@@ -114,7 +110,6 @@
         .form-group label { display: block; margin-bottom: 6px; font-weight: bold; color: var(--text-dark); font-size: 0.9rem;}
         .form-control { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--border-light); font-size: 0.95rem; background: var(--bg-main); outline: none;}
 
-        /* صف خيارات الطلب في نفس السطر */
         .order-options-row { display: flex; gap: 8px; align-items: flex-end; margin-bottom: 15px; }
         .order-options-row .custom-select-wrapper,
         .order-options-row .form-group { flex: 1; margin-bottom: 0; min-width: 0; }
@@ -139,7 +134,7 @@
 
     <div id="global-loader">
         <div class="spinner"></div>
-        <h3 style="color: var(--bg-dark-blue);">جاري تحميل المتجر...</h3>
+        <h3 style="color: var(--theme-dark);">جاري تحميل المتجر...</h3>
     </div>
 
     <div id="toast" class="toast-notification">
@@ -166,15 +161,15 @@
 
     <main id="home" class="hidden">
         <div class="categories-grid">
-            <div class="category-card" onclick="openCategory('رجالي')">
+            <div class="category-card" onclick="openCategory('شوزات')">
                 <img src="https://res.cloudinary.com/dsxrjmcxs/image/upload/c_limit,w_600,q_auto,f_auto/v1786599137/utycs38avz5wjqo38qg4.jpg">
                 <h3>شوزات</h3>
             </div>
-            <div class="category-card" onclick="openCategory('حريمي')">
+            <div class="category-card" onclick="openCategory('شنط')">
                 <img src="https://res.cloudinary.com/dsxrjmcxs/image/upload/c_limit,w_600,q_auto,f_auto/v1786599127/jzwtkbre9gylxcbee3lu.jpg">
                 <h3>شنط</h3>
             </div>
-            <div class="category-card" onclick="openCategory('أطفال')">
+            <div class="category-card" onclick="openCategory('شنط سواريه')">
                 <img src="https://res.cloudinary.com/dsxrjmcxs/image/upload/c_limit,w_400,q_auto,f_auto/v1786599118/pleuss0umchv2ojmr0nv.jpg">
                 <h3>شنط سواريه</h3>
             </div>
@@ -241,7 +236,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // تم إضافة بيانات الفايربيز الجديدة هنا
         const firebaseConfig = {
             apiKey: "AIzaSyAE28ZzvqKYZCE_mcLs1-2oHio1dJprHjc",
             authDomain: "esca-store.firebaseapp.com",
@@ -265,80 +259,53 @@
             if (url.includes('res.cloudinary.com') && url.includes('/upload/')) {
                 return url.replace('/upload/', `/upload/c_scale,w_${width}/`);
             }
-            if (url.includes('images.pexels.com')) {
-                return url.replace(/w=\d+/, `w=${width}`);
-            }
             return url;
         }
 
         async function fetchProducts() {
-    try {
-        const querySnapshot = await getDocs(collection(db, "products"));
+            try {
+                const querySnapshot = await getDocs(collection(db, "products"));
 
-        window.products = querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            firebaseId: doc.id,
-            ...doc.data()
-        }));
+                window.products = querySnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    firebaseId: doc.id,
+                    ...doc.data()
+                }));
 
-        // إخفاء شاشة التحميل دائمًا بعد انتهاء جلب البيانات
-        document.getElementById('global-loader').style.display = 'none';
+                document.getElementById('global-loader').style.display = 'none';
 
-        // لو مفيش منتجات
-        if (querySnapshot.empty) {
-            console.log("لا توجد منتجات حاليًا");
+                if (querySnapshot.empty) {
+                    console.log("لا توجد منتجات حاليًا");
+                    window.resetAndNavigate('home');
+                    return;
+                }
 
-            // الانتقال للصفحة الرئيسية بشكل طبيعي
-            window.resetAndNavigate('home');
+                const urlParams = new URLSearchParams(window.location.search);
+                const sharedCode = urlParams.get('p');
 
-            // إظهار رسالة عدم وجود منتجات
-            const emptyProducts = document.getElementById('empty-products');
+                window.history.replaceState({ page: 'home' }, "");
 
-            if (emptyProducts) {
-                emptyProducts.style.display = 'block';
-                emptyProducts.textContent = 'لا توجد منتجات حاليًا';
-            }
+                if (sharedCode) {
+                    const targetProduct = window.products.find(
+                        x => String(x.shortCode) === String(sharedCode)
+                    );
 
-            return;
-        }
+                    if (targetProduct) {
+                        window.historyStack = ['home', 'details'];
+                        window.history.pushState({ page: 'details' }, "");
+                        window.openProduct(targetProduct.id, false);
+                        return;
+                    }
+                }
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const sharedCode = urlParams.get('p');
+                window.resetAndNavigate('home');
 
-        window.history.replaceState({ page: 'home' }, "");
-
-        if (sharedCode) {
-            const targetProduct = window.products.find(
-                x => String(x.shortCode) === String(sharedCode)
-            );
-
-            if (targetProduct) {
-                window.historyStack = ['home', 'details'];
-                window.history.pushState({ page: 'details' }, "");
-                window.openProduct(targetProduct.id, false);
-                return;
+            } catch (error) {
+                console.error("خطأ في جلب البيانات:", error);
+                document.getElementById('global-loader').style.display = 'none';
+                window.resetAndNavigate('home');
             }
         }
-
-        window.resetAndNavigate('home');
-
-    } catch (error) {
-        console.error("خطأ في جلب البيانات:", error);
-
-        // مهم: لا تترك الموقع في حالة Loading
-        document.getElementById('global-loader').style.display = 'none';
-
-        // افتح الصفحة الرئيسية حتى لو حصل خطأ
-        window.resetAndNavigate('home');
-
-        const emptyProducts = document.getElementById('empty-products');
-
-        if (emptyProducts) {
-            emptyProducts.style.display = 'block';
-            emptyProducts.textContent = 'لا توجد منتجات حاليًا';
-        }
-    }
-}
 
         window.showToast = function(message, color = "#27ae60") {
             const toast = document.getElementById('toast');
@@ -405,7 +372,11 @@
             if(!p) return;
 
             const domain = window.location.origin;
-            const shareUrl = `${domain}/p/${p.shortCode}`;
+            const baseUrl = window.location.href.split('?')[0].split('#')[0];
+            const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+            
+            // تم إصلاح مسار الرابط ليعمل بشكل سليم
+            const shareUrl = `${cleanBaseUrl}/?p=${p.shortCode}`;
             const shareText = `شاهد هذا المنتج من Esca Store:\n`;
 
             if (navigator.share) {
@@ -551,7 +522,7 @@
             if (p.qty > 0) {
                 orderSectionHTML = `
                 <div class="options-section" style="overflow: visible;">
-                    <div style="font-weight:bold; font-size:0.95rem; color:var(--bg-dark-blue); margin-bottom: 12px; border-bottom: 1px solid var(--border-light); padding-bottom: 8px;">تجهيز الطلب:</div>
+                    <div style="font-weight:bold; font-size:0.95rem; color:var(--theme-dark); margin-bottom: 12px; border-bottom: 1px solid var(--border-light); padding-bottom: 8px;">تجهيز الطلب:</div>
                     
                     <input type="hidden" id="order-size" value="${defaultSize}">
                     <input type="hidden" id="order-color" value="${defaultColor}">
@@ -581,7 +552,7 @@
                         </div>
                     </div>
                     
-                    <div id="order-total-display" style="text-align:center; font-size:1.1rem; font-weight:bold; color:var(--bg-dark-blue); margin-top:15px; margin-bottom:15px;">
+                    <div id="order-total-display" style="text-align:center; font-size:1.1rem; font-weight:bold; color:var(--theme-dark); margin-top:15px; margin-bottom:15px;">
                         الإجمالي: ${p.price} ج.م
                     </div>
 
@@ -609,7 +580,7 @@
                     </div>
                     <div style="text-align: left; display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
                         <span style="font-size: 0.55rem; color: var(--silver); direction: ltr;">${pubDate}</span>
-                        <span style="color:${p.qty > 0 ? 'var(--bg-dark-blue)' : '#e74c3c'}; font-weight:bold; font-size:0.8rem; background: var(--bg-main); padding: 3px 8px; border-radius: 10px;">متاح: ${p.qty}</span>
+                        <span style="color:${p.qty > 0 ? 'var(--theme-dark)' : '#e74c3c'}; font-weight:bold; font-size:0.8rem; background: var(--bg-main); padding: 3px 8px; border-radius: 10px;">متاح: ${p.qty}</span>
                     </div>
                 </div>
 
@@ -619,7 +590,7 @@
                 </div>
 
                 <div class="options-section" style="font-size:0.85rem; color:var(--text-dark)">
-                    <div style="margin-bottom: 10px;"><i class="fa-solid fa-hashtag" style="color:var(--accent); width: 15px;"></i> <strong>كود المنتج:</strong> <span style="color:var(--bg-dark-blue); font-weight:bold;">${p.shortCode}</span></div>
+                    <div style="margin-bottom: 10px;"><i class="fa-solid fa-hashtag" style="color:var(--accent); width: 15px;"></i> <strong>كود المنتج:</strong> <span style="color:var(--theme-dark); font-weight:bold;">${p.shortCode}</span></div>
                     <div><i class="fa-solid fa-location-dot" style="color:var(--accent); width: 15px;"></i> <strong>التوصيل:</strong> ${p.delivery || 'غير محدد'}</div>
                 </div>
 
@@ -650,7 +621,7 @@
 
             const baseUrl = window.location.href.split('?')[0].split('#')[0];
             const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-            const productUrl = `${cleanBaseUrl}/p/${p.shortCode}`;
+            const productUrl = `${cleanBaseUrl}/?p=${p.shortCode}`; // تصحيح الرابط
             const totalPrice = p.price * qty;
 
             let msg = `مرحباً Esca Store، أود طلب:\n\n🔖 كود المنتج: ${p.shortCode}\n المنتج: ${p.name}\n القسم: ${p.category}\n اللون: ${color}\n المقاس: ${size}\n العدد: ${qty}\n إجمالي الحساب: ${totalPrice} ج.م\n\n🔗 الرابط: ${productUrl}`;
@@ -676,7 +647,7 @@
                     <img src="${window.optimizeImage(item.images ? item.images[0] : item.img, 100)}" style="width:50px; height:50px; border-radius:10px; object-fit:cover; border: 1px solid var(--border-light);">
                     <div style="flex:1; margin: 0 12px;">
                         <strong style="font-size:0.9rem;">${item.name}</strong><br>
-                        <small style="color:var(--text-muted); font-size:0.75rem;">لون: ${item.selColor} | مقاس: ${item.selSize} | <strong style="color:var(--bg-dark-blue)">العدد: ${item.selQty}</strong></small><br>
+                        <small style="color:var(--text-muted); font-size:0.75rem;">لون: ${item.selColor} | مقاس: ${item.selSize} | <strong style="color:var(--theme-dark)">العدد: ${item.selQty}</strong></small><br>
                         <span style="color:var(--accent); font-weight:bold; font-size:0.85rem;">${itemTotal} ج.م</span>
                     </div>
                     <i class="fa-solid fa-trash" style="color:#e74c3c; cursor:pointer; font-size:1.1rem; padding:8px;" onclick="removeFromCart(${i})"></i>
@@ -701,7 +672,7 @@
 
             let msg = `مرحباً Esca Store، هذا طلبي من السلة:\n\n` + window.cart.map((item, i) => {
                 const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-                const productUrl = `${cleanBaseUrl}/p/${item.shortCode}`;
+                const productUrl = `${cleanBaseUrl}/?p=${item.shortCode}`; // تصحيح الرابط
                 let itemTotal = item.price * item.selQty;
                 totalCartPrice += itemTotal;
                 return `${i+1}- ${item.name} (قسم: ${item.category})\n🔖 كود: ${item.shortCode}\n لون: ${item.selColor} / مقاس: ${item.selSize} / عدد: ${item.selQty}\n السعر: ${itemTotal} ج.م\n🔗 الرابط: ${productUrl}`;
