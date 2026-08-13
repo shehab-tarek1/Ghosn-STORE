@@ -299,11 +299,11 @@
     let cleanUrl = url;
     let cropTransform = '';
 
-    // قراءة إحداثيات القص المحفوظة
     if (url.includes('#crop=')) {
         const parts = url.split('#crop=');
         cleanUrl = parts[0];
-        cropTransform = 'c_crop,' + parts[1] + '/';
+        // تم إضافة g_north_west لبدء القص من أعلى اليسار بدقة بدلاً من المنتصف
+        cropTransform = 'c_crop,g_north_west,' + parts[1] + '/';
     }
 
     if (cleanUrl.includes('res.cloudinary.com') && cleanUrl.includes('/upload/')) {
@@ -311,7 +311,6 @@
     }
     return cleanUrl;
 }
-
 // دالة لجلب الصورة الكاملة الأصلية عند فتح التكبير (Lightbox)
 window.getFullImage = function(url) {
     if (!url) return '';
