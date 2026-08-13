@@ -1,7 +1,7 @@
 module.exports = async (req, res) => {
     const p = req.query.p;
 
-    // 🔴 السر هنا: إخبار الخادم بفصل الكاش بناءً على نوع المتصفح/الزائر
+    // إخبار الخادم بفصل الكاش بناءً على نوع المتصفح/الزائر
     res.setHeader('Vary', 'User-Agent');
 
     // إذا لم يكن هناك كود، وجهه للرئيسية مع منع الكاش
@@ -20,7 +20,7 @@ module.exports = async (req, res) => {
     const isOtherBot = /bot|crawler|spider|facebookexternalhit|twitter|telegram|linkedin|discord|viber|skype/i.test(userAgent);
     const isBot = isWhatsAppBot || isOtherBot;
 
-    // 🔴 إذا كان مستخدم حقيقي، نقوم بتوجيهه للمتجر فوراً مع "منع حفظ هذا التوجيه في الكاش"
+    // إذا كان مستخدم حقيقي، نقوم بتوجيهه للمتجر فوراً
     if (!isBot) {
         res.writeHead(302, { 
             'Location': `/?p=${p}`,
@@ -29,9 +29,8 @@ module.exports = async (req, res) => {
         return res.end();
     }
 
-    // 🟢 إذا كان روبوت، نجلب بيانات المنتج من Firebase
-    // ⚠️ تنبيه: تأكد أن هذا هو اسم مشروع فايربيز الخاص بالمتجر الجديد وليس القديم
-    const projectId = 'marketing-e9fdf'; 
+    // 🟢 تم التحديث: مشروع الفايربيز الجديد لـ Esca Store
+    const projectId = 'esca-store'; 
     const firestoreUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents:runQuery`;
 
     try {
@@ -61,17 +60,18 @@ module.exports = async (req, res) => {
         }
 
         const fields = data[0].document.fields || {};
-        // تم تغيير الاسم هنا إلى Ghosn STORE
-        const title = fields.name?.stringValue || 'Ghosn STORE';
+        
+        // 🟢 تم التحديث: بيانات Esca Store
+        const title = fields.name?.stringValue || 'Esca Store';
         const price = fields.price?.integerValue || fields.price?.doubleValue || '';
-        const desc = fields.description?.stringValue || 'تسوق أحدث الملابس بأفضل الأسعار.';
+        const desc = fields.description?.stringValue || 'تسوق أحدث الحقائب والأحذية بأفضل الأسعار.';
 
         const formattedPrice = price ? `${price} ج.م` : '';
         const titleWithPrice = `${title}${formattedPrice ? ' | ' + formattedPrice : ''}`;
         const finalDesc = `🔖 كود المنتج: ${p}\n${desc}`;
 
-        // تم إصلاح مشكلة السطر الجديد هنا
-        let imageUrl = 'https://res.cloudinary.com/dsxrjmcxs/image/upload/w_600,h_600,c_fill,q_80,f_jpg/v1777061113/t2f9uqoiwgt2iukgsuih.jpg'; 
+        // 🟢 تم التحديث: صورة اللوجو الافتراضية لـ Esca Store
+        let imageUrl = 'https://res.cloudinary.com/dsxrjmcxs/image/upload/c_limit,w_600,q_auto,f_auto/v1786578381/sot79yhkjy82ptwel6em.jpg'; 
 
         if (fields.images?.arrayValue?.values?.length > 0) {
             imageUrl = fields.images.arrayValue.values[0].stringValue;
@@ -100,7 +100,7 @@ module.exports = async (req, res) => {
                 <meta property="og:image:type" content="image/jpeg" />
                 <meta property="og:image:width" content="600" />
                 <meta property="og:image:height" content="600" />
-                <meta property="og:site_name" content="Ghosn STORE" />
+                <meta property="og:site_name" content="Esca Store" />
                 <meta property="og:url" content="https://${req.headers.host}/p/${p}" />
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:title" content="${titleWithPrice}" />
@@ -111,7 +111,6 @@ module.exports = async (req, res) => {
             </html>
         `;
 
-        // تقليل مدة الكاش للروبوتات وتحديثه في الخلفية
         res.setHeader('Content-Type', 'text/html; charset=utf-8');
         res.setHeader('Cache-Control', 'public, max-age=3600, stale-while-revalidate=86400');
 
