@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة التحكم | Esca Store</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- مكتبة قص الصور التفاعلية -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <style>
         :root { 
             --bg-main: #fdfafb; 
@@ -33,7 +35,7 @@
 
         #admin-content { display: none; }
         .admin-container { max-width: 700px; margin: 0 auto; background: var(--bg-surface); padding: 15px; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border-light);}
-        
+
         .section-title { font-size: 1.05rem; border-bottom: 2px solid var(--border-light); padding-bottom: 6px; margin-bottom: 12px; color: var(--theme-dark); display: flex; justify-content: space-between; align-items: center; font-weight: bold;}
 
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -44,23 +46,21 @@
         .form-group label { display: block; margin-bottom: 4px; font-weight: bold; font-size: 0.8rem; color: var(--text-dark);}
         .form-control { width: 100%; padding: 8px 10px; border: 1px solid var(--border-light); border-radius: 8px; font-size: 0.85rem; background: var(--bg-main); outline: none;}
         .form-control:focus { border-color: var(--accent); box-shadow: 0 0 5px rgba(163, 23, 56, 0.3); }
-        .form-control:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .admin-dropdown-header { background: var(--bg-main); border: 1px solid var(--border-light); padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; color: var(--theme-dark); transition: 0.3s;}
-        .admin-dropdown-header:hover { border-color: var(--accent); }
         .admin-dropdown-list { background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 8px; padding: 8px; display: none; flex-direction: column; gap: 8px; margin-bottom: 8px; max-height: 150px; overflow-y: auto; }
         .admin-dropdown-list.show { display: flex; }
-        .admin-checkbox-label { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; color: var(--text-dark); user-select: none;}
-        .admin-checkbox-label input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
+        .admin-checkbox-label { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer; color: var(--text-dark);}
+        .admin-checkbox-label input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent); }
 
         .btn-submit { width: 100%; padding: 10px; background: var(--theme-dark); color: white; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 5px;}
         .btn-submit:hover { background: #4a0012; }
         .btn-cancel { background: #e74c3c; display: none; padding: 5px 10px; border:none; border-radius:6px; color:white; cursor:pointer; font-size: 0.8rem;}
 
         .product-list { margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
-        .product-item { background: var(--bg-main); border: 1px solid var(--border-light); padding: 8px; border-radius: 8px; text-align: center; transition: 0.3s; display: flex; flex-direction: column; justify-content: space-between;}
+        .product-item { background: var(--bg-main); border: 1px solid var(--border-light); padding: 8px; border-radius: 8px; text-align: center; display: flex; flex-direction: column; justify-content: space-between;}
         .product-item.is-hidden { opacity: 0.6; filter: grayscale(80%); border-style: dashed; }
-        .product-item img { width: 100%; height: 100px; object-fit: cover; border-radius: 6px; margin-bottom: 6px; border: 1px solid var(--border-light);}
+        .product-item img { width: 100%; height: 110px; object-fit: cover; border-radius: 6px; margin-bottom: 6px; border: 1px solid var(--border-light);}
         .product-title { font-size: 0.85rem; font-weight: bold; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
         .product-qty { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px;}
 
@@ -70,7 +70,21 @@
         .btn-delete { background: #e74c3c; }
         .btn-hide { background: #f39c12; }
         .btn-show { background: #27ae60; }
-        
+
+        /* معرض معاينة صور التعديل مع أزرار القص */
+        .image-preview-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+        .preview-thumb-box { position: relative; width: 75px; height: 75px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-light); }
+        .preview-thumb-box img { width: 100%; height: 100%; object-fit: cover; }
+        .crop-btn-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(114, 47, 55, 0.85); color: white; text-align: center; font-size: 0.65rem; padding: 3px 0; cursor: pointer; font-weight: bold; }
+
+        /* نافذة القص Modal */
+        #crop-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 99999; justify-content: center; align-items: center; flex-direction: column; padding: 15px; }
+        .crop-container { width: 100%; max-width: 500px; max-height: 70vh; background: #000; border-radius: 12px; overflow: hidden; }
+        .crop-container img { width: 100%; display: block; }
+        .crop-modal-btns { margin-top: 15px; display: flex; gap: 10px; width: 100%; max-width: 500px; }
+        .crop-btn-save { flex: 1; padding: 10px; background: #27ae60; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .crop-btn-close { flex: 1; padding: 10px; background: #e74c3c; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+
         .loading { display: none; color: var(--accent); font-weight: bold; text-align: center; margin-top: 8px; font-size: 0.85rem;}
     </style>
 </head>
@@ -83,7 +97,18 @@
             <input type="email" id="login-email" class="form-control" placeholder="البريد الإلكتروني" style="margin-bottom:15px;">
             <input type="password" id="login-password" class="form-control" placeholder="كلمة المرور" style="margin-bottom:15px;">
             <button class="btn-submit" onclick="loginAdmin()">دخول</button>
-            <div id="login-error" style="color:red; margin-top:10px; font-size:0.85rem; display:none; line-height: 1.5; background: #ffebee; padding: 10px; border-radius: 8px; border: 1px solid #ffcdd2;"></div>
+            <div id="login-error" style="color:red; margin-top:10px; font-size:0.85rem; display:none; line-height: 1.5; background: #ffebee; padding: 10px; border-radius: 8px;"></div>
+        </div>
+    </div>
+
+    <!-- نافذة تحدد جزء العرض لكروت المنتجات (Modal) -->
+    <div id="crop-modal">
+        <div class="crop-container">
+            <img id="crop-image-target" src="">
+        </div>
+        <div class="crop-modal-btns">
+            <button class="crop-btn-save" onclick="applyCrop()"><i class="fa-solid fa-check"></i> حفظ تحديد الكارت</button>
+            <button class="crop-btn-close" onclick="closeCropModal()"><i class="fa-solid fa-xmark"></i> إلغاء</button>
         </div>
     </div>
 
@@ -132,6 +157,7 @@
                 <div class="form-group full-width">
                     <label>صور المنتج (حتى 7 صور)</label>
                     <input type="file" id="p-image" class="form-control" accept="image/*" multiple>
+                    <div class="image-preview-grid" id="uploaded-images-preview"></div>
                 </div>
 
                 <div class="form-group full-width" id="sizes-container"></div>
@@ -146,12 +172,14 @@
         </div>
     </div>
 
+    <!-- استدعاء مكتبة Cropper.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // بيانات الفايربيز الجديدة
         const firebaseConfig = {
             apiKey: "AIzaSyAE28ZzvqKYZCE_mcLs1-2oHio1dJprHjc",
             authDomain: "esca-store.firebaseapp.com",
@@ -169,22 +197,34 @@
         const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/dsxrjmcxs/image/upload";
         const CLOUDINARY_PRESET = "My_public_preset";
 
-        window.products =[];
+        window.products = [];
         window.editingId = null;
+        window.currentImagesList = []; // تخزين مصفوفة روابط الصور الحالية
+        window.cropper = null;
+        window.activeImageIndex = null;
 
-        window.optimizeImage = function(url, width) {
+        // دالة معالجة روابط القص لكروت المنتجات
+        window.optimizeImage = function(url, width = 400) {
             if (!url) return '';
-            if (url.includes('res.cloudinary.com') && url.includes('/upload/')) {
-                return url.replace('/upload/', `/upload/c_scale,w_${width}/`);
+            let cleanUrl = url;
+            let cropTransform = '';
+
+            if (url.includes('#crop=')) {
+                const parts = url.split('#crop=');
+                cleanUrl = parts[0];
+                cropTransform = 'c_crop,' + parts[1] + '/';
             }
-            return url;
+
+            if (cleanUrl.includes('res.cloudinary.com') && cleanUrl.includes('/upload/')) {
+                return cleanUrl.replace('/upload/', `/upload/${cropTransform}c_scale,w_${width},q_auto,f_auto/`);
+            }
+            return cleanUrl;
         }
 
-        const availableColors =["أسود", "أبيض", "أحمر", "نبيتي", "كحلي", "رصاصي", "أزرق", "أخضر", "زيتي", "أصفر", "جملي", "بيج", "بني", "هافان", "كشمير", "فوشيا", "موف", "ذهبي", "فضي", "متعدد الألوان"];
-        
-        // مقاسات تناسب الأحذية والحقائب
+        const availableColors = ["أسود", "أبيض", "أحمر", "نبيتي", "كحلي", "رصاصي", "أزرق", "أخضر", "زيتي", "أصفر", "جملي", "بيج", "بني", "هافان", "كشمير", "فوشيا", "موف", "ذهبي", "فضي", "متعدد الألوان"];
+
         const availableSizes = {
-            "مقاسات الأحذية (حريمي/رجالي)":["36", "37", "38", "39", "40", "41", "42", "43", "44", "45"],
+            "مقاسات الأحذية":["36", "37", "38", "39", "40", "41", "42", "43", "44", "45"],
             "أحجام الشنط":["One Size (مقاس واحد)", "صغير (Mini)", "وسط (Medium)", "كبير (Large)"]
         };
 
@@ -210,9 +250,7 @@
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // تم وضع الـ UID الجديد الخاص بك بنجاح
                 const ADMIN_UID = "LHmEKd4Harh5QuE4KvKps6PZ16v2"; 
-
                 if(user.uid === ADMIN_UID) { 
                     document.getElementById('login-screen').style.display = 'none';
                     document.getElementById('admin-content').style.display = 'block';
@@ -241,7 +279,7 @@
         async function fetchProducts() {
             const querySnapshot = await getDocs(collection(db, "products"));
             window.products = querySnapshot.docs.map(doc => ({ firebaseId: doc.id, ...doc.data() }));
-            
+
             window.products.sort((a, b) => {
                 let dateA = a.createdAt || a.id || 0;
                 let dateB = b.createdAt || b.id || 0;
@@ -265,7 +303,58 @@
             formData.append("upload_preset", CLOUDINARY_PRESET);
             const response = await fetch(CLOUDINARY_URL, { method: "POST", body: formData });
             const data = await response.json();
-            return data.secure_url.replace('/upload/', '/upload/c_limit,w_800,q_auto,f_auto/');
+            return data.secure_url; // حفظ الرابط الأصلي ببالكامل
+        }
+
+        // عرض الصور المرفوعة مع زر التحديد/القص ✂️
+        window.renderImagePreviews = function() {
+            const container = document.getElementById('uploaded-images-preview');
+            container.innerHTML = window.currentImagesList.map((imgUrl, index) => `
+                <div class="preview-thumb-box">
+                    <img src="${window.optimizeImage(imgUrl, 150)}">
+                    <div class="crop-btn-overlay" onclick="openCropModal(${index})"><i class="fa-solid fa-crop-simple"></i> تحديد العرض</div>
+                </div>
+            `).join('');
+        }
+
+        // فتح نافذة تحديد التركيز والقص
+        window.openCropModal = function(index) {
+            window.activeImageIndex = index;
+            let rawUrl = window.currentImagesList[index].split('#crop=')[0]; // الصورة الأصلية بدون قص
+            
+            const targetImg = document.getElementById('crop-image-target');
+            targetImg.src = rawUrl;
+
+            document.getElementById('crop-modal').style.display = 'flex';
+
+            if(window.cropper) window.cropper.destroy();
+
+            window.cropper = new Cropper(targetImg, {
+    aspectRatio: 1, // نسبة 1:1 مربع بالضبط ليلائم كروت المنتجات
+    viewMode: 1,
+    autoCropArea: 0.9,
+    responsive: true,
+    background: false
+});
+        }
+
+        // تطبيق حفظ تحديد الجزء وإرفاقه بالرابط
+        window.applyCrop = function() {
+            if(!window.cropper || window.activeImageIndex === null) return;
+            
+            const cropData = window.cropper.getData(true); // جلب الإحداثيات الأرقام الصحيحة
+            const cropString = `x_${cropData.x},y_${cropData.y},w_${cropData.width},h_${cropData.height}`;
+            
+            let rawUrl = window.currentImagesList[window.activeImageIndex].split('#crop=')[0];
+            window.currentImagesList[window.activeImageIndex] = `${rawUrl}#crop=${cropString}`;
+
+            window.closeCropModal();
+            window.renderImagePreviews();
+        }
+
+        window.closeCropModal = function() {
+            document.getElementById('crop-modal').style.display = 'none';
+            if(window.cropper) { window.cropper.destroy(); window.cropper = null; }
         }
 
         window.saveProduct = async function() {
@@ -283,10 +372,10 @@
             const colors = Array.from(document.querySelectorAll('.color-checkbox:checked')).map(cb => cb.value);
 
             if(!name || !price || !qty || sizes.length === 0 || colors.length === 0 || !desc) {
-                alert("يرجى ملء جميع البيانات الأساسية (الاسم، السعر، الوصف، الكمية، المقاسات، والألوان)!"); return;
+                alert("يرجى ملء جميع البيانات الأساسية!"); return;
             }
 
-            if(!window.editingId && fileInput.files.length === 0) {
+            if(!window.editingId && fileInput.files.length === 0 && window.currentImagesList.length === 0) {
                 alert("إرفاق صورة واحدة على الأقل ضروري!"); return;
             }
 
@@ -294,24 +383,23 @@
             const loadingMsg = document.getElementById('loading-msg');
             loadingMsg.style.display = 'block';
 
-            let newImageUrls =[];
-
             try {
                 if (fileInput.files.length > 0) {
-                    loadingMsg.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري رفع الصور...';
+                    loadingMsg.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري رفع الصور الجديدة...';
                     const filesArray = Array.from(fileInput.files).slice(0, 7); 
-                    newImageUrls = await Promise.all(filesArray.map(file => uploadToCloudinary(file)));
+                    const newlyUploaded = await Promise.all(filesArray.map(file => uploadToCloudinary(file)));
+                    window.currentImagesList = [...window.currentImagesList, ...newlyUploaded];
                 }
 
                 loadingMsg.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري حفظ البيانات...';
 
                 if (window.editingId) {
                     const productRef = doc(db, "products", window.editingId);
-                    let updateData = { name, description: desc, price: parseFloat(price), category, qty: parseInt(qty), isOffer, discount, sizes, colors, delivery };
-                    if(newImageUrls.length > 0) {
-                        updateData.images = newImageUrls;
-                        updateData.img = newImageUrls[0];
-                    }
+                    let updateData = { 
+                        name, description: desc, price: parseFloat(price), category, qty: parseInt(qty), 
+                        isOffer, discount, sizes, colors, delivery,
+                        images: window.currentImagesList, img: window.currentImagesList[0]
+                    };
                     await updateDoc(productRef, updateData);
                     alert("تم التعديل بنجاح!");
                     window.cancelEdit();
@@ -320,8 +408,9 @@
                         id: Date.now(), 
                         createdAt: Date.now(),
                         shortCode: generateShortCode(),
-                        name, description: desc, price: parseFloat(price), category, qty: parseInt(qty), isOffer, discount, sizes, colors, delivery,
-                        images: newImageUrls, img: newImageUrls[0], hidden: false
+                        name, description: desc, price: parseFloat(price), category, qty: parseInt(qty), 
+                        isOffer, discount, sizes, colors, delivery,
+                        images: window.currentImagesList, img: window.currentImagesList[0], hidden: false
                     };
                     await addDoc(collection(db, "products"), newProduct);
                     alert("تم الرفع بنجاح!");
@@ -329,8 +418,7 @@
                 }
                 fetchProducts(); 
             } catch (e) {
-                alert("حدث خطأ أثناء الحفظ أو الرفع: " + e.message);
-                console.error(e);
+                alert("حدث خطأ أثناء الحفظ: " + e.message);
             }
 
             document.getElementById('btn-submit').style.display = 'block';
@@ -354,6 +442,9 @@
             document.getElementById('p-discount').value = p.discount || "";
             document.getElementById('p-delivery').value = p.delivery;
 
+            window.currentImagesList = p.images && p.images.length > 0 ? [...p.images] : [p.img];
+            window.renderImagePreviews();
+
             document.querySelectorAll('.size-checkbox').forEach(cb => cb.checked = p.sizes.includes(cb.value));
             document.querySelectorAll('.color-checkbox').forEach(cb => cb.checked = p.colors.includes(cb.value));
 
@@ -374,7 +465,10 @@
             document.getElementById('p-price').value = ''; 
             document.getElementById('p-qty').value = ''; document.getElementById('p-image').value = '';
             document.getElementById('p-isOffer').checked = false; document.getElementById('p-discount').value = '';
-            
+
+            window.currentImagesList = [];
+            document.getElementById('uploaded-images-preview').innerHTML = '';
+
             document.querySelectorAll('.size-checkbox').forEach(cb => cb.checked = false);
             document.querySelectorAll('.color-checkbox').forEach(cb => cb.checked = false);
             document.querySelectorAll('.admin-dropdown-list').forEach(list => list.classList.remove('show'));
@@ -394,7 +488,7 @@
                     </div>
                     
                     <div style="margin-top:8px;">
-                        <button class="btn-action btn-edit" onclick="editProduct('${p.firebaseId}')"><i class="fa-solid fa-pen"></i> تعديل</button>
+                        <button class="btn-action btn-edit" onclick="editProduct('${p.firebaseId}')"><i class="fa-solid fa-pen"></i> تعديل / قص الصور</button>
                         <div class="action-btns">
                             <button class="btn-action ${p.hidden ? 'btn-show' : 'btn-hide'}" onclick="toggleHide('${p.firebaseId}', ${p.hidden})">
                                 ${p.hidden ? '<i class="fa-solid fa-eye"></i> إظهار' : '<i class="fa-solid fa-eye-slash"></i> إخفاء'}
@@ -413,7 +507,7 @@
         }
 
         window.deleteProduct = async function(firebaseId) {
-            if(confirm("هل أنت متأكد من الحذف النهائي من قاعدة البيانات؟")) {
+            if(confirm("هل أنت متأكد من الحذف النهائي؟")) {
                 await deleteDoc(doc(db, "products", firebaseId));
                 fetchProducts();
             }
